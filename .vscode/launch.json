@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+        "type": "java",
+        "name": "DiningHall",
+        "request": "launch",
+        "mainClass": "DiningHall",
+        "projectName": "cs62Final_1509e72f"
+    },
+    {
+        "type": "java",
+        "name": "Ratings",
+        "request": "launch",
+        "mainClass": "cs62Final.Ratings",
+        "projectName": "cs62Final_1509e72f"
+    },
+    {
+        "type": "java",
+        "name": "Run Ratings",
+        "request": "launch",
+        "mainClass": "Ratings",
+        "cwd": "${pomonacs622025sp}/src"
+    }
+]
+}
