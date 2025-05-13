@@ -1,22 +1,18 @@
 import java.util.HashMap;
 
-public class User {
+public class User implements Comparable<User> {
     private final int userID;
     private HashMap<String, HashMap<String, Integer>> ratings;
-    private long mealTime;
+    private long entryTime;
 
-    public User(int userID, long mealTime) {
+    public User(int userID) {
         this.userID = userID;
         this.ratings = new HashMap<>();
-        this.mealTime = System.currentTimeMillis() + mealTime;
+        this.entryTime = -1;
     }
 
     public int getUserID() {
         return userID;
-    }
-
-    public long getMealTime() {
-        return mealTime;
     }
 
     public void rate(String diningHall, String dish, int rating) {
@@ -30,7 +26,16 @@ public class User {
         return ratings;
     }
 
-    public int compareMealTimeTo(User other) {
-        return Long.compare(this.mealTime, other.mealTime);
+    public void setEntryTime(long entryTime){
+        this.entryTime = entryTime;
+    }
+
+    public long getEntryTime() {
+        return entryTime;
+    }
+
+    @Override
+    public int compareTo(User other) {
+        return Long.compare(this.entryTime, other.entryTime);
     }
 }
