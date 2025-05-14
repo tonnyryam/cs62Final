@@ -6,6 +6,20 @@
         "name": "DiningHall",
         "request": "launch",
         "mainClass": "DiningHall",
+        "projectName": "cs62Final_bb7293a1"
+    },
+    {
+        "type": "java",
+        "name": "FriendPollingSystem",
+        "request": "launch",
+        "mainClass": "FriendPollingSystem",
+        "projectName": "cs62Final_bb7293a1"
+    },
+    {
+        "type": "java",
+        "name": "DiningHall",
+        "request": "launch",
+        "mainClass": "DiningHall",
         "projectName": "cs62Final_1509e72f"
     },
     {
