@@ -9,7 +9,7 @@ public class FriendPollingSystem {
 
     // Set of valid dining halls
     private static final Set<String> VALID_DINING_HALLS = Set.of(
-        "Frank", "Frary", "Collins", "Oldenborg", "Mallot", "Hoch", "McConnell"
+        "Frank", "Frary", "Collins", "Oldenborg", "Mallot", "Hoch", "McConnel"
     );
 
     public FriendPollingSystem() {
