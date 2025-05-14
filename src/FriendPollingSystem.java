@@ -1,26 +1,31 @@
 import java.util.*;
 
 public class FriendPollingSystem {
-    // Stores each user and the set of their friends
+    // Stores each user and their set of friends
     private Map<String, Set<String>> friendGraph;
 
-    // Stores whether each user is at the dining hall
-    private Map<String, Boolean> diningStatus;
+    // Stores which dining hall each user is at (null if not at one)
+    private Map<String, String> diningHallStatus;
+
+    // Set of valid dining halls
+    private static final Set<String> VALID_DINING_HALLS = Set.of(
+        "Frank", "Frary", "Collins", "Oldenborg", "Mallot", "Hoch", "McConnell"
+    );
 
     public FriendPollingSystem() {
         friendGraph = new HashMap<>();
-        diningStatus = new HashMap<>();
+        diningHallStatus = new HashMap<>();
     }
 
     // Add a new user
     public void addUser(String userName) {
         if (!friendGraph.containsKey(userName)) {
             friendGraph.put(userName, new HashSet<>());
-            diningStatus.put(userName, false); // default: not at dining hall
+            diningHallStatus.put(userName, null); // null means not at a dining hall
         }
     }
 
-    // Add a two-way friendship
+    // Add a mutual friendship
     public void addFriendship(String user1, String user2) {
         if (friendGraph.containsKey(user1) && friendGraph.containsKey(user2)) {
             friendGraph.get(user1).add(user2);
@@ -28,47 +33,50 @@ public class FriendPollingSystem {
         }
     }
 
-    // Set whether a user is at the dining hall
-    public void setDiningStatus(String userName, boolean isAtDiningHall) {
-        if (diningStatus.containsKey(userName)) {
-            diningStatus.put(userName, isAtDiningHall);
+    // Set which dining hall a user is at
+    public void setDiningHall(String userName, String diningHall) {
+        if (!diningHallStatus.containsKey(userName)) return;
+        if (diningHall == null || VALID_DINING_HALLS.contains(diningHall)) {
+            diningHallStatus.put(userName, diningHall);
+        } else {
+            System.out.println("Invalid dining hall: " + diningHall);
         }
     }
 
-    // Get friends currently at the dining hall
-    public Set<String> getFriendsAtDiningHall(String userName) {
-        Set<String> result = new HashSet<>();
+    // Get friends who are currently at a dining hall
+    public Map<String, String> getFriendsAtDiningHalls(String userName) {
+        Map<String, String> result = new HashMap<>();
         if (!friendGraph.containsKey(userName)) return result;
 
         for (String friend : friendGraph.get(userName)) {
-            if (diningStatus.getOrDefault(friend, false)) {
-                result.add(friend);
+            String hall = diningHallStatus.get(friend);
+            if (hall != null) {
+                result.put(friend, hall);
             }
         }
         return result;
     }
 
-    // Main method to demonstrate functionality
     public static void main(String[] args) {
         FriendPollingSystem system = new FriendPollingSystem();
 
         // Add users
-        system.addUser("Alice");
+        system.addUser("Tommy");
+        system.addUser("Miles");
+        system.addUser("John");
         system.addUser("Bob");
-        system.addUser("Charlie");
-        system.addUser("Diana");
 
         // Add friendships
-        system.addFriendship("Alice", "Bob");
-        system.addFriendship("Alice", "Charlie");
-        system.addFriendship("Bob", "Diana");
+        system.addFriendship("Tommy", "Miles");
+        system.addFriendship("Miles", "John");
+        system.addFriendship("Bob", "John");
 
-        // Set dining statuses
-        system.setDiningStatus("Charlie", true);
-        system.setDiningStatus("Diana", true);
+        // Set dining hall status
+        system.setDiningHall("Miles", "Frary");
+        system.setDiningHall("John", "Collins");
 
         // Print results
-        System.out.println("Alice's friends at the dining hall: " + system.getFriendsAtDiningHall("Alice"));
-        System.out.println("Bob's friends at the dining hall: " + system.getFriendsAtDiningHall("Bob"));
+        System.out.println("Tommy's friends at dining halls: " + system.getFriendsAtDiningHalls("Tommy"));
+        System.out.println("Bob's friends at dining halls: " + system.getFriendsAtDiningHalls("Bob"));
     }
 }
