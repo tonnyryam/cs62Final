@@ -3,6 +3,13 @@
   "configurations": [
     {
         "type": "java",
+        "name": "Program2",
+        "request": "launch",
+        "mainClass": "Program2",
+        "projectName": "cs62Final_1509e72f"
+    },
+    {
+        "type": "java",
         "name": "Program",
         "request": "launch",
         "mainClass": "Program",

@@ -83,7 +83,11 @@ public class DiningHall {
 
         Collections.sort(departureTimes);
         int index = Math.min(waitingOutside - 1, departureTimes.size() - 1);
-        return index >= 0 ? departureTimes.get(index) : 0;
+        if (index >= 0 && departureTimes.get(index) != null) {
+            return departureTimes.get(index);
+        } else {
+            return 0;
+        }
     }
 
 
