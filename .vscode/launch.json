@@ -3,6 +3,13 @@
   "configurations": [
     {
         "type": "java",
+        "name": "Program",
+        "request": "launch",
+        "mainClass": "Program",
+        "projectName": "cs62Final_1509e72f"
+    },
+    {
+        "type": "java",
         "name": "DiningHall",
         "request": "launch",
         "mainClass": "DiningHall",
