@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class FriendPollingSystem {
+public class FriendPollingSystem implements InterfaceFriendPollingSystem {
     // Stores each user and their set of friends
     private Map<String, Set<String>> friendGraph;
     // Stores which dining hall each user is at (null if not at one)

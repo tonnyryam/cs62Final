@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class User implements Comparable<User> {
+public class User implements InterfaceUser {
     private final int userID;
     private HashMap<String, HashMap<String, Integer>> ratings;
     private long entryTime;
@@ -12,7 +12,7 @@ public class User implements Comparable<User> {
         this.entryTime = -1;
     }
     
-    
+
     public void rate(String diningHall, String dish, int rating) {
         String hallKey = diningHall.toLowerCase().trim();
         if (!ratings.containsKey(hallKey)) {
@@ -23,8 +23,8 @@ public class User implements Comparable<User> {
 
 
     @Override
-    public int compareTo(User other) {
-        return Long.compare(this.entryTime, other.entryTime);
+    public int compareTo(InterfaceUser other) {
+        return Long.compare(this.entryTime, other.getEntryTime());
     }
 
 

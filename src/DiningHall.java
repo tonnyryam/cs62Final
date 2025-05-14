@@ -1,7 +1,7 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DiningHall {
+public class DiningHall implements InterfaceDiningHall {
     private final String name;
     private final int maxSize;
     private final long mealLength;
