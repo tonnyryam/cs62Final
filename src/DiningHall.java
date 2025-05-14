@@ -1,75 +1,126 @@
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DiningHall {
-    private String name;
+    private final String name;
+    private final int maxSize;
+    private final long mealLength;
+    private final int popularity;
+    private String status;
     private Queue<User> queue;
-    private ScheduledExecutorService scheduler;
 
-    public DiningHall(String name) {
+
+    public DiningHall(String name, int maxSize, long mealLength, int popularity) {
         this.name = name;
+        this.maxSize = maxSize;
+        this.mealLength = mealLength;
+        this.popularity = popularity;
+        this.status = "closed";
         this.queue = new PriorityQueue<>();
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
-    public void enqueue(User user) {
+
+    public void enqueue(User user, long simTime) {
+        user.setEntryTime(simTime);
         queue.add(user);
     }
 
-    public void startDequeueing() {
-        scheduler.scheduleAtFixedRate(this::dequeueExpiredUsers, 0, 1, TimeUnit.SECONDS);
-    } 
 
-    private void dequeueExpiredUsers() {
-        long currentTime = System.currentTimeMillis();
-        while (!queue.isEmpty() && (queue.peek().getMealTime() < currentTime)) {
-            User expiredUser = queue.poll();
-            System.out.println("User " + expiredUser.getUserID() + " has expired and is removed from the queue.");
+    public void dequeueUsers(long simTime) {
+        while (!queue.isEmpty()) {
+            User user = queue.peek();
+            if (user.getEntryTime() + this.mealLength <= simTime) {
+                queue.poll();
+            } else {
+                break;
+            }
         }
     }
 
-    public void stopDequeueing() {
-        scheduler.shutdown();
+
+    public String updateStatus(String statusFlag) {
+        if (statusFlag.equalsIgnoreCase("closed")) {
+            this.status = "closed";
+            return "closed";
+        }
+
+        if (this.status.equals("closed") && statusFlag.equalsIgnoreCase("open")) {
+            this.status = "empty";
+        }
+
+        if (!this.status.equals("closed")) {
+            double density = (double) queue.size() / maxSize;
+            if (density > 1.0) this.status = "full";
+            else if (density >= 0.95) this.status = "packed";
+            else if (density >= 0.7) this.status = "busy";
+            else if (density >= 0.4) this.status = "moderate";
+            else if (density >= 0.1) this.status = "light";
+            else this.status = "empty";
+        }
+
+        return this.status;
     }
 
-    public List<Map.Entry<String,Integer>> topDishes(int topN, ArrayList<User> users) {
-        HashMap<String, Integer> dishRatings = new HashMap<>();
-        for (User user : users) {
-            HashMap<String, Integer> userRatings = user.getRatings().get(this.name);
-            if (userRatings != null) {
-                for (String dish : userRatings.keySet()) {
-                    dishRatings.put(dish, dishRatings.getOrDefault(dish, 0) + userRatings.get(dish));
+
+    public long getWaitTime(long simTime) {
+        if (queue.isEmpty()) return 0;
+
+        int inHall = Math.min(queue.size(), maxSize);
+        int waitingOutside = queue.size() - inHall;
+
+        List<Long> departureTimes = new ArrayList<>();
+        int count = 0;
+        for (User user : queue) {
+            if (count >= inHall) break;
+            long leaveTime = user.getEntryTime() + mealLength;
+            if (leaveTime > simTime) {
+                departureTimes.add(leaveTime - simTime);
+            }
+            count++;
+        }
+
+        if (waitingOutside <= 0) return 0;
+
+        Collections.sort(departureTimes);
+        int index = Math.min(waitingOutside - 1, departureTimes.size() - 1);
+        return index >= 0 ? departureTimes.get(index) : 0;
+    }
+
+
+    public List<Map.Entry<String, Double>> topDishes(int topN, HashMap<Integer, User> users) {
+        HashMap<String, Integer> totalRatings = new HashMap<>();
+        HashMap<String, Integer> ratingCounts = new HashMap<>();
+        String hallKey = this.name.toLowerCase().trim();
+
+        for (User user : users.values()) {
+            HashMap<String, HashMap<String, Integer>> userRatings = user.getRatings();
+            if (userRatings.containsKey(hallKey)) {
+                for (Map.Entry<String, Integer> entry : userRatings.get(hallKey).entrySet()) {
+                    String dish = entry.getKey();
+                    int rating = entry.getValue();
+                    totalRatings.put(dish, totalRatings.getOrDefault(dish, 0) + rating);
+                    ratingCounts.put(dish, ratingCounts.getOrDefault(dish, 0) + 1);
                 }
             }
         }
-        return dishRatings.entrySet()
-                .stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                .limit(topN)
-                .collect(Collectors.toList());
-    }
 
-    public static void main(String[] args) {
-        DiningHall diningHall = new DiningHall("Fdady");
-        diningHall.enqueue(new User(1, 5000));
-        diningHall.enqueue(new User(2, 3000));
-        diningHall.enqueue(new User(3, 7000));
-        diningHall.startDequeueing();
-
-        // Simulate some time passing
-        try {
-            Thread.sleep(10000); // Sleep for 10 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        HashMap<String, Double> averageRatings = new HashMap<>();
+        for (String dish : totalRatings.keySet()) {
+            double avg = (double) totalRatings.get(dish) / ratingCounts.get(dish);
+            averageRatings.put(dish, avg);
         }
+
+        return averageRatings.entrySet()
+            .stream()
+            .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+            .limit(topN)
+            .collect(Collectors.toList());
     }
+
+
+    public String getName() { return this.name; }
+    public String getStatus() { return this.status; }
+    public int getMaxSize() { return this.maxSize; }
+    public int getPopularity() { return this.popularity; }
+    public PriorityQueue<User> getQueue() { return (PriorityQueue<User>) this.queue; }
 }
