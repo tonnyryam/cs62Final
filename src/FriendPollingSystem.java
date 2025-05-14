@@ -1,21 +1,21 @@
 import java.util.*;
 
-public class FriendPollingSystem {
+public class FriendPollingSystem implements InterfaceFriendPollingSystem {
     // Stores each user and their set of friends
     private Map<String, Set<String>> friendGraph;
-
     // Stores which dining hall each user is at (null if not at one)
     private Map<String, String> diningHallStatus;
-
     // Set of valid dining halls
     private static final Set<String> VALID_DINING_HALLS = Set.of(
-        "Frank", "Frary", "Collins", "Oldenborg", "Mallot", "Hoch", "McConnel"
+        "Frank", "Frary", "Collins", "Oldenborg", "Malott", "Hoch", "McConnel"
     );
 
+
     public FriendPollingSystem() {
-        friendGraph = new HashMap<>();
-        diningHallStatus = new HashMap<>();
+        this.friendGraph = new HashMap<>();
+        this.diningHallStatus = new HashMap<>();
     }
+
 
     // Add a new user
     public void addUser(String userName) {
@@ -25,6 +25,7 @@ public class FriendPollingSystem {
         }
     }
 
+
     // Add a mutual friendship
     public void addFriendship(String user1, String user2) {
         if (friendGraph.containsKey(user1) && friendGraph.containsKey(user2)) {
@@ -32,6 +33,7 @@ public class FriendPollingSystem {
             friendGraph.get(user2).add(user1);
         }
     }
+
 
     // Set which dining hall a user is at
     public void setDiningHall(String userName, String diningHall) {
@@ -42,6 +44,7 @@ public class FriendPollingSystem {
             System.out.println("Invalid dining hall: " + diningHall);
         }
     }
+
 
     // Get friends who are currently at a dining hall
     public Map<String, String> getFriendsAtDiningHalls(String userName) {
@@ -55,28 +58,5 @@ public class FriendPollingSystem {
             }
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        FriendPollingSystem system = new FriendPollingSystem();
-
-        // Add users
-        system.addUser("Tommy");
-        system.addUser("Miles");
-        system.addUser("John");
-        system.addUser("Bob");
-
-        // Add friendships
-        system.addFriendship("Tommy", "Miles");
-        system.addFriendship("Miles", "John");
-        system.addFriendship("Bob", "John");
-
-        // Set dining hall status
-        system.setDiningHall("Miles", "Frary");
-        system.setDiningHall("John", "Collins");
-
-        // Print results
-        System.out.println("Tommy's friends at dining halls: " + system.getFriendsAtDiningHalls("Tommy"));
-        System.out.println("Bob's friends at dining halls: " + system.getFriendsAtDiningHalls("Bob"));
     }
 }

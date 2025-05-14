@@ -1,7 +1,7 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DiningHall {
+public class DiningHall implements InterfaceDiningHall {
     private final String name;
     private final int maxSize;
     private final long mealLength;
@@ -83,7 +83,11 @@ public class DiningHall {
 
         Collections.sort(departureTimes);
         int index = Math.min(waitingOutside - 1, departureTimes.size() - 1);
-        return index >= 0 ? departureTimes.get(index) : 0;
+        if (index >= 0 && departureTimes.get(index) != null) {
+            return departureTimes.get(index);
+        } else {
+            return 0;
+        }
     }
 
 

@@ -17,7 +17,9 @@ public class Program {
     private List<DiningHall> diningHalls;
     private HashMap<DiningHall, Long> openingTimes = new HashMap<>();
     private HashMap<DiningHall, Long> closingTimes = new HashMap<>();
-
+    private FriendPollingSystem friendSystem = new FriendPollingSystem();
+    public User currentUser = null;
+    public String currentUserName = null;
 
     public Program() {
         this.users = new HashMap<>();
@@ -51,7 +53,7 @@ public class Program {
 
     public DiningHall getPopularDiningHall() {
         int totalPopularity = 0;
-        for (DiningHall diningHall : diningHalls) {
+        for (DiningHall diningHall : this.diningHalls) {
             totalPopularity += diningHall.getPopularity();
         }
         Random rand = new Random();
@@ -137,20 +139,22 @@ public class Program {
     }
 
 
-    public void dishDiningHallViewer() {
+    public void featureDemonstration() {
         Scanner scanner = new Scanner(System.in);
-        User currentUser = null;  // tracks the current session user
 
-        System.out.println("=== Dish Ratings & Dining Hall Viewer ===");
-
-        boolean exit = false;
-        while (!exit) {
-            System.out.println("\nChoose an option:");
+        while (true) {
+            System.out.println("\n=== Dish Dining Hall Dashboard ===");
+            System.out.println("You are logged in as: " + this.currentUserName + " (ID: " + this.currentUser.getUserID() + ")");
+            System.out.println("Choose an option:");
             System.out.println("1. View top dishes at each dining hall");
             System.out.println("2. Add or update a dish rating");
             System.out.println("3. Delete a dish rating");
             System.out.println("4. View all available dishes at each dining hall");
-            System.out.println("5. Start simulation");
+            System.out.println("5. Set your current dining hall");
+            System.out.println("6. Add a friend");
+            System.out.println("7. Check where your friends are");
+            System.out.println("8. Exit and start dining hall simulation");
+
             System.out.print("Enter choice: ");
             String choice = scanner.nextLine().trim();
 
@@ -171,161 +175,161 @@ public class Program {
                     break;
 
                 case "2":
-                    System.out.println("\n=== Start Session / Add/Edit Dish Ratings ===");
-                    System.out.println("Press Enter at any time to return to the main menu.");
-
-                    System.out.print("Enter your name (or just press Enter to cancel): ");
-                    String userName = scanner.nextLine().trim();
-                    if (userName.isEmpty()) break;
-
-                    int newId = this.users.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
-                    currentUser = new User(newId);
-                    this.users.put(newId, currentUser);
-                    System.out.println("Assigned User ID: " + newId + " — Welcome, " + userName + "!");
-
+                    System.out.println("\n=== Add/Edit Dish Rating ===");
                     while (true) {
                         System.out.print("Enter dining hall name: ");
                         String hall = scanner.nextLine().trim();
                         if (hall.isEmpty()) break;
 
-                        // Validate dining hall
                         boolean validHall = this.diningHalls.stream()
-                            .anyMatch(dh -> dh.getName().equalsIgnoreCase(hall));
+                                .anyMatch(dh -> dh.getName().equalsIgnoreCase(hall));
                         if (!validHall) {
                             System.out.println("Invalid dining hall. Try again.");
                             continue;
                         }
 
                         String dish = "";
-                    while (true) {
-                        System.out.print("Enter dish name: ");
-                        dish = scanner.nextLine().trim();
-                        if (dish.isEmpty()) break;
-                        if (dish.length() < 2) {
-                            System.out.println("Dish name is too short. Try again.");
-                            continue;
-                        }
-
-                        // Check if dish already rated for this hall
-                        boolean dishExists = false;
-                        String hallKey = hall.toLowerCase();
-                        for (User u : this.users.values()) {
-                            Map<String, HashMap<String, Integer>> ratings = u.getRatings();
-                            if (ratings.containsKey(hallKey) && ratings.get(hallKey).containsKey(dish)) {
-                                dishExists = true;
-                                break;
-                            }
-                        }
-
-                        if (!dishExists) {
-                            System.out.print("This dish hasn't been rated yet. Add it anyway? (y/n): ");
-                            String confirm = scanner.nextLine().trim();
-                            if (!confirm.equalsIgnoreCase("y")) {
-                                System.out.println("Okay, enter a different dish.");
+                        while (true) {
+                            System.out.print("Enter dish name: ");
+                            dish = scanner.nextLine().trim();
+                            if (dish.isEmpty()) break;
+                            if (dish.length() < 2) {
+                                System.out.println("Dish name too short.");
                                 continue;
                             }
+
+                            boolean exists = false;
+                            for (User u : this.users.values()) {
+                                Map<String, HashMap<String, Integer>> r = u.getRatings();
+                                if (r.containsKey(hall.toLowerCase()) && r.get(hall.toLowerCase()).containsKey(dish)) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!exists) {
+                                System.out.print("Dish not rated yet. Add anyway? (y/n): ");
+                                if (!scanner.nextLine().trim().equalsIgnoreCase("y")) {
+                                    continue;
+                                }
+                            }
+                            break;
                         }
-                        break; // valid dish name confirmed
-                    }
+                        if (dish.isEmpty()) break;
 
-                    if (dish.isEmpty()) break;
-
-                    System.out.print("Enter rating (1–5): ");
-                    String ratingInput = scanner.nextLine().trim();
-                    if (ratingInput.isEmpty()) break;
-
-                    try {
-                        int rating = Integer.parseInt(ratingInput);
-                        if (rating < 1 || rating > 5) {
-                            System.out.println("Rating must be between 1 and 5. Try again.");
-                            continue;
+                        System.out.print("Enter rating (1-5): ");
+                        String ratingInput = scanner.nextLine().trim();
+                        if (ratingInput.isEmpty()) break;
+                        try {
+                            int rating = Integer.parseInt(ratingInput);
+                            if (rating < 1 || rating > 5) {
+                                System.out.println("Rating must be 1-5.");
+                                continue;
+                            }
+                            this.currentUser.rate(hall, dish, rating);
+                            this.friendSystem.setDiningHall(this.currentUserName, hall);
+                            System.out.println("Rating saved.");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid number.");
                         }
-
-                        currentUser.rate(hall, dish, rating);
-                        System.out.println("✅ Rating saved.\n");
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid number. Try again.");
                     }
-                }
                     break;
 
                 case "3":
-                    if (currentUser == null) {
-                        System.out.println("No active user. Please select option 2 first to start a session.");
+                    if (this.currentUser == null) {
+                        System.out.println("No current user.");
                         break;
                     }
-
-                    System.out.println("\n=== View or Delete Ratings for User ID: " + currentUser.getUserID() + " ===");
-
-                    Map<String, HashMap<String, Integer>> allRatings = currentUser.getRatings();
+                    Map<String, HashMap<String, Integer>> allRatings = this.currentUser.getRatings();
                     if (allRatings.isEmpty()) {
-                        System.out.println("No ratings to show.");
+                        System.out.println("No ratings yet.");
                         break;
                     }
 
-                    System.out.println("Your current ratings:");
                     for (Map.Entry<String, HashMap<String, Integer>> entry : allRatings.entrySet()) {
-                        String hallName = entry.getKey();
-                        for (Map.Entry<String, Integer> dish : entry.getValue().entrySet()) {
-                            System.out.println("- " + hallName + ": " + dish.getKey() + " → " + dish.getValue());
+                        for (Map.Entry<String, Integer> d : entry.getValue().entrySet()) {
+                            System.out.println("- " + entry.getKey() + ": " + d.getKey() + " → " + d.getValue());
                         }
                     }
 
-                    System.out.print("Enter dining hall name of the dish to delete (or press Enter): ");
-                    String hallToDelete = scanner.nextLine().trim();
+                    System.out.print("Enter dining hall: ");
+                    String hallToDelete = scanner.nextLine().trim().toLowerCase();
                     if (hallToDelete.isEmpty()) break;
-
-                    System.out.print("Enter dish name to delete (or press Enter): ");
+                    System.out.print("Enter dish to delete: ");
                     String dishToDelete = scanner.nextLine().trim();
                     if (dishToDelete.isEmpty()) break;
 
-                    Map<String, Integer> hallMap = allRatings.get(hallToDelete.toLowerCase());
-                    if (hallMap != null && hallMap.containsKey(dishToDelete)) {
-                        hallMap.remove(dishToDelete);
-                        System.out.println("Rating deleted.");
+                    if (allRatings.containsKey(hallToDelete)) {
+                        allRatings.get(hallToDelete).remove(dishToDelete);
+                        System.out.println("Rating removed.");
                     } else {
-                        System.out.println("No rating found for that dish.");
+                        System.out.println("No such rating found.");
                     }
                     break;
 
                 case "4":
-                    System.out.println("\n=== All Rated Dishes by Dining Hall (with Averages) ===");
-
+                    System.out.println("\n=== Available Dishes ===");
                     for (DiningHall dh : this.diningHalls) {
-                        String hallKey = dh.getName().toLowerCase().trim();
-                        Map<String, Integer> totalRatings = new HashMap<>();
-                        Map<String, Integer> counts = new HashMap<>();
-
-                        for (User user : this.users.values()) {
-                            Map<String, HashMap<String, Integer>> ratings = user.getRatings();
-                            if (ratings.containsKey(hallKey)) {
-                                for (Map.Entry<String, Integer> entry : ratings.get(hallKey).entrySet()) {
-                                    String dish = entry.getKey();
-                                    int rating = entry.getValue();
-                                    totalRatings.put(dish, totalRatings.getOrDefault(dish, 0) + rating);
-                                    counts.put(dish, counts.getOrDefault(dish, 0) + 1);
-                                }
+                        Set<String> dishes = new HashSet<>();
+                        String hallKey = dh.getName().toLowerCase();
+                        for (User u : this.users.values()) {
+                            if (u.getRatings().containsKey(hallKey)) {
+                                dishes.addAll(u.getRatings().get(hallKey).keySet());
                             }
                         }
+                        System.out.println(dh.getName() + ":");
+                        if (dishes.isEmpty()) System.out.println("  No dishes rated yet.");
+                        else dishes.forEach(d -> System.out.println("  - " + d));
+                    }
+                    break;
 
-                        System.out.println("\n" + dh.getName() + ":");
-                        if (totalRatings.isEmpty()) {
-                            System.out.println("  No dishes rated yet.");
-                        } else {
-                            for (String dish : totalRatings.keySet()) {
-                                double avg = (double) totalRatings.get(dish) / counts.get(dish);
-                                System.out.printf("  %-20s  Avg: %.2f\n", dish, avg);
-                            }
+                 case "5":
+                    System.out.println("\n=== Set Your Current Dining Hall ===");
+                    System.out.print("Enter the dining hall you're currently at: ");
+                    String hallSet = scanner.nextLine().trim();
+                    if (hallSet.isEmpty()) break;
+
+                    boolean valid = this.diningHalls.stream()
+                            .anyMatch(dh -> dh.getName().equalsIgnoreCase(hallSet));
+                    if (!valid) {
+                        System.out.println("Invalid dining hall name.");
+                        break;
+                    }
+
+                    this.friendSystem.setDiningHall(this.currentUserName, hallSet);
+                    System.out.println(this.currentUserName + " is now marked as eating at " + hallSet);
+                    break;
+
+                case "6":
+                    System.out.println("\n=== Add a Friend ===");
+                    System.out.print("Enter your friend's name: ");
+                    String friendName = scanner.nextLine().trim();
+                    if (friendName.isEmpty()) break;
+
+                    this.friendSystem.addUser(this.currentUserName);
+                    this.friendSystem.addUser(friendName);
+                    this.friendSystem.addFriendship(this.currentUserName, friendName);
+                    System.out.println(friendName + " is now your friend.");
+                    break;
+
+                case "7":
+                    System.out.println("\n=== Where Are Your Friends? ===");
+                    Map<String, String> friends = this.friendSystem.getFriendsAtDiningHalls(this.currentUserName);
+                    if (friends.isEmpty()) {
+                        System.out.println("No friends are currently checked into dining halls.");
+                    } else {
+                        for (Map.Entry<String, String> entry : friends.entrySet()) {
+                            System.out.println("- " + entry.getKey() + " is at " + entry.getValue());
                         }
                     }
                     break;
 
-                case "5":
-                    exit = true;
-                    break;
+                case "8":
+                    System.out.println("Goodbye, " + this.currentUserName + "!");
+                    return;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println("Invalid input. Choose 1-8.");
             }
         }
     }
@@ -385,26 +389,56 @@ public class Program {
 
     public static void main(String[] args) {
         Program program = new Program();
+
+        // Load ratings from CSV
         String filePath = "C:\\Users\\tommy\\github-classroom\\pomonacs622025sp\\cs62Final\\id_dish_rating_diningHall.csv";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
-            reader.readLine(); 
+            reader.readLine(); // Skip header
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 int userID = Integer.parseInt(parts[0]);
                 String dish = parts[1].trim();
                 int rating = Integer.parseInt(parts[2].trim());
-                String diningHall = parts[3].trim().toLowerCase(); // normalize to lowercase
+                String diningHall = parts[3].trim().toLowerCase();
 
                 program.users.putIfAbsent(userID, new User(userID));
                 program.users.get(userID).rate(diningHall, dish, rating);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
 
-        program.dishDiningHallViewer();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Welcome! Please enter your name to start: ");
+        String userName = scanner.nextLine().trim();
+        while (userName.isEmpty()) {
+            System.out.print("Name cannot be blank. Enter your name: ");
+            userName = scanner.nextLine().trim();
+        }
+
+        int newId = program.users.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+        User currentUser = new User(newId);
+        program.users.put(newId, currentUser);
+        program.currentUser = currentUser;
+        program.currentUserName = userName;
+        System.out.println("Assigned User ID: " + newId + " - Welcome, " + userName + "!");
+
+        program.friendSystem.addUser(userName);
+
+        String[] friends = {"Miles", "John", "Alice", "Bob"};
+        String[] halls = {"Frary", "Collins", "Malott", "Hoch"};
+        for (int i = 0; i < friends.length; i++) {
+            program.friendSystem.addUser(friends[i]);
+            program.friendSystem.setDiningHall(friends[i], halls[i]);
+        }
+
+        program.friendSystem.addFriendship(userName, "Miles");
+        program.friendSystem.addFriendship(userName, "Alice");
+        program.friendSystem.addFriendship("Miles", "John");
+        program.friendSystem.addFriendship("Alice", "Bob");
+
+        program.featureDemonstration();
         program.runSimulation();
     }
 }
