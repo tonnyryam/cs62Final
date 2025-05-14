@@ -6,6 +6,13 @@
         "name": "Program",
         "request": "launch",
         "mainClass": "Program",
+        "projectName": "cs62Final_bb7293a1"
+    },
+    {
+        "type": "java",
+        "name": "Program",
+        "request": "launch",
+        "mainClass": "Program",
         "projectName": "cs62Final_1509e72f"
     },
     {
