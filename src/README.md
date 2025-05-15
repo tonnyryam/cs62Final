@@ -14,10 +14,10 @@ Whether you're a first-year student unfamiliar with dining trends or someone jus
 
 ## Features
 
-✅ Real-time location tracking of friends  
-✅ Ability to rate and review meals at each dining hall  
-✅ Summary of top-rated meals by dining hall  
-✅ Wait time estimation based on crowds  
+- Real-time location tracking of friends  
+- Ability to rate and review meals at each dining hall  
+- Summary of top-rated meals by dining hall  
+- Wait time estimation based on crowds  
 
 ## Dataset
 
