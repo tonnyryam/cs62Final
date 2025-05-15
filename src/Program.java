@@ -210,7 +210,7 @@ public class Program {
                 case "2":
                     System.out.println("\n=== Add/Edit Dish Rating ===");
                     while (true) {
-                        System.out.print("Enter dining hall name: ");
+                        System.out.print("Enter dining hall name (or ENTER to exit): ");
                         String hall = scanner.nextLine().trim(); // Get hall name
                         if (hall.isEmpty()) break;
 
@@ -223,7 +223,7 @@ public class Program {
 
                         String dish = "";
                         while (true) {
-                            System.out.print("Enter dish name: ");
+                            System.out.print("Enter dish name (or ENTER to exit): ");
                             dish = scanner.nextLine().trim(); // Get dish name
                             if (dish.isEmpty()) break;
                             if (dish.length() < 2) {
@@ -285,7 +285,7 @@ public class Program {
                         }
                     }
 
-                    System.out.print("Enter dining hall: ");
+                    System.out.print("Enter dining hall (or ENTER to exit): ");
                     String hallToDelete = scanner.nextLine().trim().toLowerCase(); // Get hall to delete from
                     if (hallToDelete.isEmpty()) break;
                     System.out.print("Enter dish to delete: ");
