@@ -4,13 +4,13 @@ A smarter dining companion for the 5Cs.
 
 ## Overview
 
-**Time2Dine** is an enhanced version of the 5C Menu App, created to improve the dining experience at the Claremont Colleges. Students often arrive at dining halls only to find long lines and limited seating — especially right after class periods. On top of that, many students have no idea whether the meal being served is worth the trip. Time2Dine helps solve these problems with three key features:
+**Time2Dine** is an enhanced version of the 5C Menu App, created to improve the dining experience at the Claremont Colleges. Students often arrive at dining halls only to find long lines and limited seating, especially right after class periods. On top of that, many students have no idea whether the meal being served is worth the trip. Time2Dine helps solve these problems with three key features:
 
 - **Estimated Wait Times** based on user check-ins
 - **Dish Ratings** from student feedback
 - **Friend Polling** to see where your friends are eating
 
-Whether you're a first-year student unfamiliar with dining trends or someone just trying to avoid the Frank lunch rush, Time2Dine gives you the information you need to make smarter meal decisions.
+Whether you're a first-year student unfamiliar with dining trends or someone just trying to avoid the Frary lunch rush, Time2Dine gives you the information you need to make smarter meal decisions.
 
 ## Features
 
