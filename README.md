@@ -41,4 +41,3 @@ Our dataset contains realistic dish names and dining hall locations from the act
    ```bash
    git clone https://github.com/YOUR-USERNAME/Time2Dine.git
    cd Time2Dine
-2. 
