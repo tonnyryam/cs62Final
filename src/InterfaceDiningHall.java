@@ -45,10 +45,9 @@ public interface InterfaceDiningHall {
      */
     List<Map.Entry<String, Double>> topDishes(int topN, HashMap<Integer, User> users);
 
-    // Basic getters
-    String getName();
-    String getStatus();
-    int getMaxSize();
-    int getPopularity();
-    PriorityQueue<User> getQueue();
+    String getName();   // Getter for dining hall name
+    String getStatus(); // Getter for current status
+    int getMaxSize();   // Getter for max size
+    int getPopularity();    // Getter for popularity
+    PriorityQueue<User> getQueue(); // Getter for the queue
 }

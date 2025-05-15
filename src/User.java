@@ -48,8 +48,8 @@ public class User implements InterfaceUser {
         return Long.compare(this.entryTime, other.getEntryTime());
     }
 
-    @Override public HashMap<String, HashMap<String, Integer>> getRatings() { return this.ratings;} // Getter for ratings
-    @Override public void setEntryTime(long entryTime) { this.entryTime = entryTime; }  // Setter for entry time
-    @Override public long getEntryTime() { return this.entryTime; } // Getter for entry time
-    @Override public int getUserID() { return this.userID; }    // Getter for user ID
+    public HashMap<String, HashMap<String, Integer>> getRatings() { return this.ratings;} // Getter for ratings
+    public void setEntryTime(long entryTime) { this.entryTime = entryTime; }  // Setter for entry time
+    public long getEntryTime() { return this.entryTime; } // Getter for entry time
+    public int getUserID() { return this.userID; }    // Getter for user ID
 }

@@ -14,6 +14,13 @@ public class DiningHall implements InterfaceDiningHall {
     private String status;
     private Queue<User> queue;
 
+    /**
+     * Constructor initializes the dining hall with its name, size, meal length, and popularity.
+     * @param name the name of the dining hall
+     * @param maxSize the maximum seating capacity
+     * @param mealLength the average time a user spends in the hall (in ms)
+     * @param popularity a score representing the hall's popularity
+     */
     public DiningHall(String name, int maxSize, long mealLength, int popularity) {
         this.name = name;
         this.maxSize = maxSize;
@@ -24,18 +31,19 @@ public class DiningHall implements InterfaceDiningHall {
     }
 
     /**
-     * Enqueues a user into the dining hall and records their entry time.
+     * Enqueues a user into the dining hall's queue and sets their entry time.
+     * @param user the user entering the dining hall
+     * @param simTime the current simulation time
      */
-    @Override
     public void enqueue(User user, long simTime) {
         user.setEntryTime(simTime); // Mark when they entered
         queue.add(user);    // Add to the queue
     }
 
     /**
-     * Dequeues users who have finished their meals.
+     * Dequeues users who have finished their meal based on the current simulation time.
+     * @param simTime the current simulation time
      */
-    @Override
     public void dequeueUsers(long simTime) {
         while (!queue.isEmpty()) {   // Check each user in the queue
             User user = queue.peek();   // Look at first in line
@@ -48,9 +56,10 @@ public class DiningHall implements InterfaceDiningHall {
     }
 
     /**
-     * Updates the current status of the dining hall based on flag and load.
+     * Updates the status of the dining hall based on its current state and the provided status flag.
+     * @param statusFlag "open" or "closed"
+     * @return the updated status string
      */
-    @Override
     public String updateStatus(String statusFlag) {
         if (statusFlag.equalsIgnoreCase("closed")) {
             this.status = "closed"; // Mark as closed for new entries
@@ -75,9 +84,10 @@ public class DiningHall implements InterfaceDiningHall {
     }
 
     /**
-     * Calculates the estimated wait time for someone just arriving.
+     * Estimates the wait time for a user based on the current queue and simulation time.
+     * @param simTime the current simulation time
+     * @return estimated wait time in milliseconds
      */
-    @Override
     public long getWaitTime(long simTime) {
         if (queue.isEmpty()) return 0;  // No line = no wait
 
@@ -107,9 +117,11 @@ public class DiningHall implements InterfaceDiningHall {
     }
 
     /**
-     * Returns the top N dishes by average rating from all users.
+     * Computes the top N dishes based on average ratings from users.
+     * @param topN the number of top dishes to return
+     * @param users a map of all users and their ratings
+     * @return a list of dish-rating pairs sorted by average rating
      */
-    @Override
     public List<Map.Entry<String, Double>> topDishes(int topN, HashMap<Integer, User> users) {
         HashMap<String, Integer> totalRatings = new HashMap<>();    // Dish -> sum of ratings
         HashMap<String, Integer> ratingCounts = new HashMap<>();    // Dish -> count of ratings
@@ -140,9 +152,9 @@ public class DiningHall implements InterfaceDiningHall {
             .collect(Collectors.toList());
     }
 
-    @Override public String getName() { return this.name; } // Get the name of the dining hall
-    @Override public String getStatus() { return this.status; } // Get the current status (e.g., open, busy)
-    @Override public int getMaxSize() { return this.maxSize; }  // Get the hall's seating capacity
-    @Override public int getPopularity() { return this.popularity; }    // Get the popularity score of the hall
-    @Override public PriorityQueue<User> getQueue() { return (PriorityQueue<User>) this.queue; }    // Access the user queue
+    public String getName() { return this.name; } // Get the name of the dining hall
+    public String getStatus() { return this.status; } // Get the current status (e.g., open, busy)
+    public int getMaxSize() { return this.maxSize; }  // Get the hall's seating capacity
+    public int getPopularity() { return this.popularity; }    // Get the popularity score of the hall
+    public PriorityQueue<User> getQueue() { return (PriorityQueue<User>) this.queue; }    // Access the user queue
 }
