@@ -13,11 +13,12 @@ A smarter dining companion for the 5Cs.
 Whether you're a first-year student unfamiliar with dining trends or someone just trying to avoid the Frary lunch rush, Time2Dine gives you the information you need to make smarter meal decisions.
 
 ## Features
+## TO-DO: In order for any of the features to work, you must copy the csv file path into the Program.java main class. There is a TO-DO in the Program.java file showing users where to copy the filepath
 
 - Real-time location tracking of friends  
 - Ability to rate and review meals at each dining hall  
 - Summary of top-rated meals by dining hall  
-- Wait time estimation based on crowds  
+- Wait time estimation based on crowds 
 
 ## Dataset
 
