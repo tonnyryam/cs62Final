@@ -427,7 +427,7 @@ public class Program {
     public static void main(String[] args) {
         Program program = new Program();
 
-        String filePath = "C:\\Users\\tommy\\github-classroom\\pomonacs622025sp\\cs62Final\\id_dish_rating_diningHall.csv"; // TODO Path to the CSV file
+        String filePath = "id_dish_rating_diningHall.csv"; // path to the CSV file
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             reader.readLine(); // Skip header
